@@ -3,7 +3,10 @@ import {
   UInt64,
   Bool,
   Int64,
-  Character
+  Character,
+  CircuitString,
+  PrivateKey,
+  Signature
 } from 'o1js';
 
 
@@ -30,3 +33,23 @@ const char1EqualsChar2: Bool = char1.equals(char2)
 console.log(`char1: ${char1}`);
 console.log(`char1 === char2: ${char1EqualsChar2.toString()}`);
 console.log(`Fields in char1: ${char1.toFields().length}`);
+
+const str1 = CircuitString.fromString("abc..xyz")
+console.log(`str1: ${str1}`)
+console.log(`Fields in str1: ${str1.toFields().length}`);
+
+const zkAppPrivateKey = PrivateKey.random()
+const zkAppPublicKey = zkAppPrivateKey.toPublicKey()
+
+console.log(`private key: ${zkAppPrivateKey.toBase58()}`);
+console.log(`public key: ${zkAppPublicKey.toBase58()}`);
+
+const data1 = char2.toFields().concat(signedNumSum.toFields())
+const data2 = char1.toFields().concat(str1.toFields())
+
+console.log(`data1: ${data1}`)
+console.log(`data2: ${data2}`)
+
+const signature = Signature.create(zkAppPrivateKey, data2)
+
+const verifiedData1 = signature.verify(zkAppPublicKey, data1).toString()
